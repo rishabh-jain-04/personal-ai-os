@@ -1,5 +1,6 @@
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardCard from "@/components/dashboard/DashboardCard";
+import CalendarEvents from "@/components/dashboard/CalendarEvents";
 
 export default function Home() {
   return (
@@ -15,11 +16,7 @@ export default function Home() {
         </DashboardCard>
 
         <DashboardCard title="Today's Schedule">
-          <ul className="space-y-3 text-gray-300">
-            <li>9:00 AM — Product Strategy Meeting</li>
-            <li>2:00 PM — Interview Preparation</li>
-            <li>6:30 PM — Gym Session</li>
-          </ul>
+          <CalendarEvents />
         </DashboardCard>
 
         <DashboardCard title="Priority Tasks">
