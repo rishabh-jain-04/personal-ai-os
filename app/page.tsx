@@ -3,20 +3,55 @@ import DashboardCard from "@/components/dashboard/DashboardCard";
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex-1 p-8">
+    <main className="min-h-screen bg-black text-white p-8">
       <DashboardHeader />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DashboardCard title="AI Daily Brief">
           <p className="text-gray-400">
-            Your personalized daily briefing will appear here.
+            Heavy rain expected after 6 PM. Leave by 8:10 AM to
+            reach office on time.
           </p>
         </DashboardCard>
 
         <DashboardCard title="Today's Schedule">
+          <ul className="space-y-3 text-gray-300">
+            <li>9:00 AM — Product Strategy Meeting</li>
+            <li>2:00 PM — Interview Preparation</li>
+            <li>6:30 PM — Gym Session</li>
+          </ul>
+        </DashboardCard>
+
+        <DashboardCard title="Priority Tasks">
+          <ul className="space-y-2 text-gray-300">
+            <li>• Finish consulting case practice</li>
+            <li>• Reply to internship email</li>
+            <li>• Prepare MBA documents</li>
+          </ul>
+        </DashboardCard>
+
+        <DashboardCard title="Weather & Commute">
           <p className="text-gray-400">
-            Calendar events will appear here.
+            Rain probability: 80%
+            <br />
+            Estimated commute: 52 mins
           </p>
+        </DashboardCard>
+
+        <DashboardCard title="Important Emails">
+          <ul className="space-y-2 text-gray-300">
+            <li>Recruiter follow-up</li>
+            <li>Project deadline reminder</li>
+            <li>Meeting rescheduled</li>
+          </ul>
+        </DashboardCard>
+
+        <DashboardCard title="Recommendations">
+          <ul className="space-y-2 text-gray-300">
+            <li>• Use 11 AM – 1 PM for deep work</li>
+            <li>• Reschedule gym if rain worsens</li>
+            <li>• Complete priority tasks before 5 PM</li>
+          </ul>
         </DashboardCard>
       </div>
     </main>
