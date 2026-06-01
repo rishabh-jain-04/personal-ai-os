@@ -1,7 +1,15 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getTodayCalendarEvents } from "@/services/googleCalendar";
-import { geminiModel } from "@/lib/gemini";
+import { parseDailyBrief } from "@/lib/brief";
+import {
+  buildDailyBriefPrompt,
+  gatherBriefContext,
+} from "@/lib/briefContext";
+import { generateBriefJson, toUserFacingGeminiError } from "@/lib/gemini";
+import {
+  generateRuleRecommendations,
+  ruleRecommendationsToMessages,
+} from "@/services/recommendations";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -19,52 +27,36 @@ export async function GET() {
     );
   }
 
-  let events: { title?: string; start?: string }[] = [];
-  let calendarError: string | undefined;
+  const { context, warnings } = await gatherBriefContext(session.accessToken);
+  const ruleRecommendations = ruleRecommendationsToMessages(
+    generateRuleRecommendations(context)
+  );
 
   try {
-    const calendarData = await getTodayCalendarEvents(session.accessToken);
-    events =
-      calendarData.items?.map((event) => ({
-        title: event.summary,
-        start: event.start?.dateTime || event.start?.date,
-      })) ?? [];
-  } catch (error) {
-    calendarError =
-      error instanceof Error ? error.message : "Failed to load calendar";
-    console.error("[api/ai-brief] calendar fetch failed", calendarError);
-  }
-
-  const prompt = `
-You are an intelligent productivity assistant.
-
-Analyze the user's schedule and generate:
-- a concise daily brief
-- workload observations
-- productivity suggestions
-
-Today's events:
-${JSON.stringify(events, null, 2)}
-
-Keep response under 120 words.
-`;
-
-  try {
-    const result = await geminiModel.generateContent(prompt);
-    const brief = result.response.text();
+    const raw = await generateBriefJson(buildDailyBriefPrompt(context));
+    const brief = parseDailyBrief(raw);
 
     return Response.json({
       brief,
-      ...(calendarError ? { calendarError } : {}),
+      ruleRecommendations,
+      ...(warnings.calendarError ? { calendarError: warnings.calendarError } : {}),
+      ...(warnings.weatherError ? { weatherError: warnings.weatherError } : {}),
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to generate AI brief";
-    console.error("[api/ai-brief] Gemini error", message);
+    console.error(
+      "[api/ai-brief] Gemini error",
+      error instanceof Error ? error.message : error
+    );
 
     return Response.json(
-      { error: message, brief: null, ...(calendarError ? { calendarError } : {}) },
-      { status: 502 }
+      {
+        error: toUserFacingGeminiError(error),
+        brief: null,
+        ruleRecommendations,
+        ...(warnings.calendarError ? { calendarError: warnings.calendarError } : {}),
+        ...(warnings.weatherError ? { weatherError: warnings.weatherError } : {}),
+      },
+      { status: 503 }
     );
   }
 }

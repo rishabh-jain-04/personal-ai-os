@@ -2,6 +2,8 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import CalendarEvents from "@/components/dashboard/CalendarEvents";
 import AIBrief from "@/components/dashboard/AIBrief";
+import WeatherCard from "@/components/dashboard/WeatherCard";
+import ImportantEmails from "@/components/dashboard/ImportantEmails";
 
 export default function Home() {
   return (
@@ -26,19 +28,11 @@ export default function Home() {
         </DashboardCard>
 
         <DashboardCard title="Weather & Commute">
-          <p className="text-gray-400">
-            Rain probability: 80%
-            <br />
-            Estimated commute: 52 mins
-          </p>
+          <WeatherCard />
         </DashboardCard>
 
         <DashboardCard title="Important Emails">
-          <ul className="space-y-2 text-gray-300">
-            <li>Recruiter follow-up</li>
-            <li>Project deadline reminder</li>
-            <li>Meeting rescheduled</li>
-          </ul>
+          <ImportantEmails />
         </DashboardCard>
 
         <DashboardCard title="Recommendations">
