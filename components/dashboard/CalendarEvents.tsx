@@ -19,11 +19,9 @@ export default function CalendarEvents() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status !== "authenticated") {
-      setEvents([]);
-      setError(null);
-      return;
-    }
+    if (status !== "authenticated") return;
+
+    let cancelled = false;
 
     async function fetchEvents() {
       setLoading(true);
@@ -33,6 +31,8 @@ export default function CalendarEvents() {
         const response = await fetch("/api/calendar");
         const data = await response.json();
 
+        if (cancelled) return;
+
         if (!response.ok) {
           setError(data.error ?? "Could not load calendar");
           setEvents([]);
@@ -41,14 +41,20 @@ export default function CalendarEvents() {
 
         setEvents(data.items ?? []);
       } catch {
-        setError("Could not load calendar");
-        setEvents([]);
+        if (!cancelled) {
+          setError("Could not load calendar");
+          setEvents([]);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchEvents();
+
+    return () => {
+      cancelled = true;
+    };
   }, [status]);
 
   if (status === "loading" || loading) {

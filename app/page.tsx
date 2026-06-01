@@ -1,6 +1,7 @@
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import CalendarEvents from "@/components/dashboard/CalendarEvents";
+import AIBrief from "@/components/dashboard/AIBrief";
 
 export default function Home() {
   return (
@@ -9,10 +10,7 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DashboardCard title="AI Daily Brief">
-          <p className="text-gray-400">
-            Heavy rain expected after 6 PM. Leave by 8:10 AM to
-            reach office on time.
-          </p>
+          <AIBrief />
         </DashboardCard>
 
         <DashboardCard title="Today's Schedule">
